@@ -1,0 +1,77 @@
+library(foreign)
+
+data<-read.dta(
+"E:\\All_Projects\\Project_Me_Regulation\\Final Data Set\\FinalData_Regulation_09052017.dta")
+
+results<-lm(stateregu_promo_focal~
+nallsmo+
+nmarketdemand+
+nmarketdemand*industryact+
+nmarketdemand*nallsmo+
+nmarketdemand*stateregu_promo_other+ 
+unemployment*nmarketdemand+ 
+nmarketdemand*stateregu_constrain_other+ 
+allspot+ 
+nallsmo+
+govbreach_1m+
+inst6014_nom 
++
+ cpo +
+allprivacy+
+ dem +
+ gdppercap + 
+ totalpop+
+divided+as.character(statefipx)+as.character(currentyear)+
+as.character(month), 
+    data =data)
+summary(results)
+
+
+allspot*nallsmo+
+allspot*stateregu_constrain_other+
+allspot*stateregu_promo_other+
+
+
+
+results<-lm(stateregu_constrain_focal~
+stateregu_constrain_other+
+nallsmo+
+nmarketdemand+
+stateregu_constrain_other*nallsmo+
+stateregu_promo_other*nallsmo+
+nmarketdemand*nallsmo+
+nnationalsmo*nallsmo+
+govbreach_1m+
+allaccid3+
+allspot+
+alldrone+
+allactivity+
+inst6014_nom 
++
+ cpo +
+allprivacy+
+ dem +
+ gdppercap + 
+ totalpop+
+divided+as.character(statefipx)+as.character(currentyear)+
+as.character(month), 
+    data =data)
+summary(results)
+
+
+
+library(foreign)
+
+data<-read.dta(
+"E:\\All_Projects\\Project_Me_Regulation\\Final Data Set\\FinalData_Regulation_09052017.dta")
+
+fulldata<-read.dta(
+"E:\\All_Projects\\Project_Me_Regulation\\Final Data Set\\Regulation0723.dta")
+
+toadd<-fulldata[,1:3]
+toadd$largebreach_12m<-fulldata$largebreach_12m
+
+data<-merge(data,toadd,
+by.x=c("currentyear","month","statefipx"),
+by.y=c("currentyear","month","statefipx"),
+all.x=TRUE)
