@@ -1,8 +1,23 @@
-
 library(foreign)
 
 data<-read.dta(
-"D:\\All_Projects\\Project_Me_Regulation\\Final Data Set\\FinalData_Regulation_09052017.dta")
+"StateLevel_Regulation_0920.dta")
+
+eqDemand <- stateregu_constrain_focal~ alldrone +smo+ stateregu_constrain_other_p1
+eqSupply <- stateregu_promo_focal~ alldrone+smo +stateregu_promo_other_p1
+eqSystem <- list(demand = eqDemand, supply = eqSupply)
+fitols <- systemfit(eqSystem,data=data, method = "SUR")
+summary(fitols) 
+
+#clean up smo
+
+
+#clean up industry
+
+
+#clean up other state
+
+
 
 fulldata<-read.dta(
 "D:\\All_Projects\\Project_Me_Regulation\\Final Data Set\\Regulation0723.dta")
