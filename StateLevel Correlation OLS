@@ -1,13 +1,21 @@
+
 library(foreign)
 
 data<-read.dta(
 "StateLevel_Regulation_0920.dta")
 
-eqDemand <- stateregu_constrain_focal~ alldrone +smo+ stateregu_constrain_other_p1
-eqSupply <- stateregu_promo_focal~ alldrone+smo +stateregu_promo_other_p1
+eqDemand <- stateregu_constrain_focal~ alldrone +smo+
+ stateregu_constrain_other_p1+stateregu_promo_other_p1+as.character(statefipx)+as.character(currentyear)+
+as.character(month)
+
+eqSupply <- stateregu_promo_focal~ alldrone+smo +
+stateregu_promo_other_p1+ stateregu_constrain_other_p1+as.character(statefipx)+as.character(currentyear)+
+as.character(month)
+
 eqSystem <- list(demand = eqDemand, supply = eqSupply)
 fitols <- systemfit(eqSystem,data=data, method = "SUR")
 summary(fitols) 
+
 
 #clean up smo
 
