@@ -5,21 +5,53 @@ library(systemfit)
 
 data<-read.dta("Final_regulation_0921.dta")
 
-eqDemand <- stateregu_constrain_focal~ smoresourceratio+
-smoherfadj+smoresource_near+ smoherf_near+
-stateregu_constrain_other_p1+stateregu_promo_other_p1+as.character(statefipx)+cluster_YM
 
-eqSupply <- stateregu_promo_focal~smoresourceratio+smoherfadj+smoresource_near+ smoherf_near+
-stateregu_promo_other_p1+ stateregu_constrain_other_p1+stateregu_constrain_other_p1+stateregu_promo_other_p1+as.character(statefipx)+cluster_YM
+eqDemand <- stateregu_constrain_focal~ 
+smoresourceratio+
+smoherfadj+
+adjherfindrone+
+totaldrone+
+smoresource_near+
+smoherf_near+
+totaldrone_near+
+adjherfindrone_near+
+stateregu_constrain_other_p1+
+downstreamdroneF+
+gdppercap+
+nclub+
+allspot+
+shotb+
+industryact+
+as.character(statefipx)+as.factor(currentyear) +month
+
+
+
+eqSupply <- stateregu_promo_focal~
+smoresourceratio+
+smoherfadj+
+adjherfindrone+
+totaldrone+
+smoresource_near+
+smoherf_near+
+totaldrone_near+
+adjherfindrone_near+
+stateregu_promo_other_p1+
+downstreamdroneF+
+gdppercap+
+nclub+
+allspot+
+shotb+
+industryact+
+as.character(statefipx)+as.factor(currentyear) +month
 
 eqSystem <- list(demand = eqDemand, supply = eqSupply)
 
 
+
 fitols <- systemfit(eqSystem,data=data, method = "SUR")
 
-
-
 summary(fitols) 
+
 
 
 #cluster two variables
