@@ -53,3 +53,16 @@ as.numeric(as.matrix(mm$ols.r.squared) ),digits=2) ))
 )
 )
 ,type="html",file="numfundingzipsubset1.html")
+
+
+# write logit table
+mm<-summary(results)
+print.xtable(xtable(
+rbind(data.frame(cleardata(mm$coefficients)),
+data.frame(cbind("Obs.",mm$df.null+1)),
+data.frame(cbind("AIC", round( 
+as.numeric(as.matrix(mm$aic) ),digits=2) ))
+)
+)
+,type="html",file="numfundingzipsubset1.html")
+
