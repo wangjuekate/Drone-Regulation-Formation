@@ -1,0 +1,246 @@
+
+library(systemfit)
+eqSupply <-dummy_promo~
+Allrule+promomimic+constrainmimic+constraincompete+
+gdppercap+Citylaw+allactivity_p+industryact_p+
+ as.character(statefipx)+as.character(currentyear)
+
+eqDemand <-dummy_constrain~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+allactivity_p+industryact_p+constraincompete+
+as.character(statefipx)+as.character(currentyear)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=data, method = "SUR")
+summary(fitols)
+
+# Drone enterprises competition
+eqSupply <-dummy_promo~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*dronecompete+
+ as.character(statefipx)+as.character(currentyear)
+
+eqDemand <-dummy_constrain~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*dronecompete+
+as.character(statefipx)+as.character(currentyear)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=data, method = "SUR")
+summary(fitols)
+
+# Crises
+
+eqSupply <-dummy_promo~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*allspot_p+
+ as.character(statefipx)+as.character(currentyear)
+
+eqDemand <-dummy_constrain~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*allspot_p+
+as.character(statefipx)+as.character(currentyear)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=data, method = "SUR")
+summary(fitols)
+
+
+# Alliances
+eqSupply <-dummy_promo~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*industryact_p+
+ as.character(statefipx)+as.character(currentyear)
+
+eqDemand <-dummy_constrain~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*industryact_p+
+as.character(statefipx)+as.character(currentyear)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=data, method = "SUR")
+summary(fitols)
+
+eqSupply <-dummy_promo~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*allactivity_p+
+ as.character(statefipx)+as.character(currentyear)
+
+eqDemand <-dummy_constrain~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*allactivity_p+
+as.character(statefipx)+as.character(currentyear)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=data, method = "SUR")
+summary(fitols)
+
+
+# Main Effect
+eqSupply <-stateregu_promonow~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete+
+ as.character(statefipx)+as.character(currentyear)
+
+eqDemand <-stateregu_constrainnow~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete+
+as.character(statefipx)+as.character(currentyear)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=data, method = "SUR")
+summary(fitols)
+
+
+eqSupply <-stateregu_promonow~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*dronecompete+
+ as.character(statefipx)+as.character(currentyear)
+
+eqDemand <-stateregu_constrainnow~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*dronecompete+
+as.character(statefipx)+as.character(currentyear)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=data, method = "SUR")
+summary(fitols)
+
+
+eqSupply <-stateregu_promonow~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*allspot_p+
+ as.character(statefipx)+as.character(currentyear)
+
+eqDemand <-stateregu_constrainnow~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*allspot_p+
+as.character(statefipx)+as.character(currentyear)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=data, method = "SUR")
+summary(fitols)
+
+eqSupply <-stateregu_promonow~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*industryact_p+
+ as.character(statefipx)+as.character(currentyear)
+
+eqDemand <-stateregu_constrainnow~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*industryact_p+
+as.character(statefipx)+as.character(currentyear)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=data, method = "SUR")
+summary(fitols)
+
+eqSupply <-stateregu_promonow~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*allactivity_p+
+ as.character(statefipx)+as.character(currentyear)
+
+eqDemand <-stateregu_constrainnow~
+Allrule+promomimic+constrainmimic+
+gdppercap+Citylaw+constraincompete*allactivity_p+
+as.character(statefipx)+as.character(currentyear)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=data, method = "SUR")
+summary(fitols)
+
+
+
+#state level analyses
+eqSupply<-promoyear~ 
+gdppercap+Allrules+Citylaw+
+promomimic+competeconstrain+as.character(currentyear)+
+as.character(statefipx)
+
+eqDemand<-constrainyear~
+gdppercap+Allrules+Citylaw+
+constrainmimic+competeconstrain+as.character(currentyear)+
+as.character(statefipx)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=stateyearfinal, method = "SUR")
+
+# Drones
+eqSupply<-promoyear~ 
+gdppercap+Allrules+Citylaw+
+promomimic+competeconstrain*alldrone+as.character(currentyear)+
+as.character(statefipx)
+
+eqDemand<-constrainyear~
+gdppercap+Allrules+Citylaw+
+constrainmimic+competeconstrain*alldrone+as.character(currentyear)+
+as.character(statefipx)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=stateyearfinal, method = "SUR")
+
+#Accidents
+
+eqSupply<-promoyear~ 
+gdppercap+Allrules+Citylaw+
+promomimic+competeconstrain*allspot+as.character(currentyear)+
+as.character(statefipx)
+
+eqDemand<-constrainyear~
+gdppercap+Allrules+Citylaw+
+constrainmimic+competeconstrain*allspot+as.character(currentyear)+
+as.character(statefipx)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=stateyearfinal, method = "SUR")
+
+
+#industry alliance
+
+eqSupply<-promoyear~ 
+gdppercap+Allrules+Citylaw+
+promomimic+competeconstrain*industryact+as.character(currentyear)+
+as.character(statefipx)
+
+eqDemand<-constrainyear~
+gdppercap+Allrules+Citylaw+
+constrainmimic+competeconstrain*industryact+as.character(currentyear)+
+as.character(statefipx)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=stateyearfinal, method = "SUR")
+
+
+
+eqSupply<-promoyear~ 
+gdppercap+Allrules+Citylaw+
+promomimic+competeconstrain*allactivity+as.character(currentyear)+
+as.character(statefipx)
+
+eqDemand<-constrainyear~
+gdppercap+Allrules+Citylaw+
+constrainmimic+competeconstrain*allactivity+as.character(currentyear)+
+as.character(statefipx)
+
+eqSystem <- list(demand = eqSupply, supply = eqDemand)
+
+fitols <- systemfit(eqSystem,data=stateyearfinal, method = "SUR")
+
+
+
+
+
