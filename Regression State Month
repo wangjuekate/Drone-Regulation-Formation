@@ -1,13 +1,17 @@
 
+#summary and correlation for variables
+sum dummy_constrain Allrule promomimic constrainmimic gdppercap Citylaw allactivity_p industryact_p constraincompete dronecompete allspot_p allactivity_p industryact_p
+sum constrainyear promoyear gdppercap Allrules Citylaw constrainmimic promomimic competeconstrain alldrone allspot allactivity industryact
+
 library(systemfit)
 eqSupply <-dummy_promo~
-Allrule+promomimic+constrainmimic+constraincompete+
-gdppercap+Citylaw+allactivity_p+industryact_p+
+promomimic+constraincompete+Allrule+
+gdppercap+Citylaw+
  as.character(statefipx)+as.character(currentyear)
 
 eqDemand <-dummy_constrain~
-Allrule+promomimic+constrainmimic+
-gdppercap+Citylaw+allactivity_p+industryact_p+constraincompete+
+constrainmimic+constrainmimic+Allrule+
+gdppercap+Citylaw+constraincompete+
 as.character(statefipx)+as.character(currentyear)
 
 eqSystem <- list(demand = eqSupply, supply = eqDemand)
