@@ -72,13 +72,14 @@ eqSystem <- list(demand = eqSupply, supply = eqDemand)
 fitols <- systemfit(eqSystem,data=data, method = "SUR")
 summary(fitols)
 
+library(systemfit)
 eqSupply <-dummy_promo~
-Allrule+promomimic+constrainmimic+
-gdppercap+Citylaw+constraincompete*allactivity_p+
+promomimic+constraincompete*allactivity_p+Allrule+
+gdppercap+Citylaw+
  as.character(statefipx)+as.character(currentyear)
 
 eqDemand <-dummy_constrain~
-Allrule+promomimic+constrainmimic+
+constrainmimic+constrainmimic+Allrule+
 gdppercap+Citylaw+constraincompete*allactivity_p+
 as.character(statefipx)+as.character(currentyear)
 
