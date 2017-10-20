@@ -1,0 +1,57 @@
+eqDemand <-lm(dummy_constrain~
+Allrule+gdppercap+Citylaw+
+constraincompete+
+constrainmimic+
+as.character(statefipx)+cluster_YM
+,data=data)
+
+summary(eqDemand)
+
+eqDemand <-lm(dummy_promo~
+Allrule+gdppercap+Citylaw+
+constraincompete+
+constrainmimic+
+as.character(statefipx)+cluster_YM
+,data=data)
+
+summary(eqDemand)
+
+eqDemand <-lm(dummy_constrain~
+Allrule+gdppercap+Citylaw+
+constraincompete*alldrone+
+constrainmimic*alldrone+
+as.character(statefipx)+cluster_YM
+,data=data)
+
+summary(eqDemand)
+
+
+eqDemand <-lm(dummy_constrain~
+Allrule+gdppercap+Citylaw+
+constraincompete*alldrone_p+
+constrainmimic*alldrone_p+
+as.character(statefipx)+cluster_YM
+,data=data)
+
+summary(eqDemand)
+
+
+eqDemand <-lm(dummy_constrain~
+Allrule+gdppercap+Citylaw+
+constraincompete+
+constrainmimic*allspot+
+as.character(statefipx)+cluster_YM
+,data=data)
+
+summary(eqDemand)
+
+
+eqDemand <-lm(dummy_constrain~
+Allrule+gdppercap+Citylaw+
+constraincompete+
+constrainmimic*allactivity_p+
+as.character(statefipx)+cluster_YM
+,data=data)
+
+summary(eqDemand)
+
