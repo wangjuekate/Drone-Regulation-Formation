@@ -1,0 +1,147 @@
+
+
+
+#calculate the airport list
+airport<-readLines("C:\\Users\\Jue Wang\\Downloads\\AplicationDistance\\airports.txt")
+
+library(stringi)
+airport<-stri_enc_toutf8(airport)
+mm<-matrix("",nrow=length(airport),ncol=20)
+
+for(i in 1:length(airport)){
+address<-unlist(strsplit(as.matrix(airport[i]),","))
+mm[i,1:length(address)]<-address
+}
+write.table(mm,file="Airportlocation.csv",sep=",",row.names=FALSE)
+
+#militarylocation
+militarybase<-read.table("Militarybase.csv",sep=",",header=TRUE)
+mm<-matrix("",nrow=nrow(militarybase),ncol=10)
+for(i in 1:100){
+address<-unlist(strsplit(as.matrix(militarybase[i,]),","))
+mm[i,1:length(address)]<-address
+}
+write.table(mm,file="Militarybaselocationpoint.csv",sep=",",row.names=FALSE)
+
+#Forprofit
+firmID<-read.table("ForprofitID.csv",sep=",",header=TRUE)
+firmID<-data.frame(as.matrix(firmID))
+Matchfirm<-read.table("MatchFirm.csv",sep=",",header=TRUE)
+location<-read.table("zip_codes_states.csv",sep=",",header=TRUE)
+location<-location[which(!is.na(location$latitude)),]
+
+firmID<-merge(firmID,Matchfirm,by.x="docID",by.y="docID",all.x=TRUE)
+firmID$latitude<-""
+firmID$longitude<-""
+firmID$zip<-as.numeric(as.matrix(firmID$zip))
+firmID<-firmID[which(!is.na(firmID$zip)),]
+
+
+for(i in 1:nrow(firmID)){
+findadd<-which(as.numeric(as.matrix(location[,1]))==as.numeric(as.matrix(firmID[i,4])))
+if(length(findadd)==0){
+findadd<- which.min(abs( as.numeric(as.matrix(location[,1]))- as.numeric(as.matrix(firmID[i,4])))) 
+}
+firmID[i,]$latitude<-location[findadd,2]
+firmID[i,]$longitude<-location[findadd,3]
+}
+
+write.table(firmID,file="forprofitlocation.csv",sep=",",row.names=FALSE)
+
+
+
+#AUVSI
+library(readstata13)
+data<-read.dta13("Firmactivity_20180914.dta")
+AUVSI<-read.table("AUVSImember.csv",sep=",",header=TRUE)
+Matchfirm<-read.table("MatchFirm.csv",sep=",",header=TRUE)
+location<-read.table("zip_codes_states.csv",sep=",",header=TRUE)
+location<-location[which(!is.na(location$latitude)),]
+
+firmID<-merge(AUVSI,Matchfirm,by.x="docID",by.y="docID",all.x=TRUE)
+firmID$AUVSI<-NULL
+firmID$latitude<-""
+firmID$longitude<-""
+firmID$zip<-as.numeric(as.matrix(firmID$zip))
+firmID<-firmID[which(!is.na(firmID$zip)),]
+
+for(i in 1:nrow(firmID)){
+
+findadd<-which(as.numeric(as.matrix(location[,1]))==as.numeric(as.matrix(firmID[i,4])))
+if(length(findadd)==0){
+findadd<- which.min(abs( as.numeric(as.matrix(location[,1]))- as.numeric(as.matrix(firmID[i,4])))) 
+}
+firmID[i,]$latitude<-location[findadd,2]
+firmID[i,]$longitude<-location[findadd,3]
+}
+
+write.table(firmID,file="AUVSIlocation.csv",sep=",",row.names=FALSE)
+
+#Nonprofit
+Nonprofit<-read.table("",)
+
+
+#find nearest distance
+statedata<-read.dta13("NewDistance_20180929.dta")
+stateadd<-statedata[,1:3]
+stateadd$date<-as.Date(paste(stateadd$currentyear,stateadd$month,"01",sep="-"))
+
+
+forprofit<-read.table("forprofitlocation.csv",sep=",",header=TRUE)
+forprofit$date<- as.Date(paste(forprofit$exemptionyear,forprofit$exemptionmonth,"01",sep="-"))
+Matchfirm<-read.table("MatchFirm.csv",sep=",",header=TRUE)
+Matchfirm$exemptionyear<-NULL
+Matchfirm$exemptionmonth<-NULL
+Matchfirm$zip<-NULL
+forprofit<-merge(forprofit,Matchfirm,by.x="docID", by.y="docID", all.x=TRUE)
+
+
+
+install.packages("geosphere")
+library(geosphere)
+military<-read.table("Militarybaselocationpoint.csv",sep=",",header=TRUE)
+military<-military[which(!is.na(military$V1)),]
+airport<-read.table("Airportloc.csv",sep=",",header=TRUE)
+
+library(rgeos)
+
+calmeandistance<-function(set1, set2){
+
+distance<-matrix("",nrow=nrow(set2),ncol=1)
+for(i in 1:nrow(set2)){
+distance[i]<-distm(cbind(set1[2],set1[1]), cbind(set2[i,2],set2[i,1]), fun = distHaversine)
+}
+
+return(min(distance))
+}
+
+
+caldistance<-function(input, orgs, military, airport){
+address<-which(orgs$date<as.Date(as.matrix(input[4]))& orgs$statef ==as.numeric(as.matrix(input[3])))
+if(length(address)!=0){
+meanmilitary<-mean(as.numeric(unlist(apply(orgs[address, 5:6],1, calmeandistance,military))),na.rm=TRUE)
+meanairport<-mean(as.numeric(unlist(apply(orgs[address, 5:6],1, calmeandistance,airport))),na.rm=TRUE)
+}else{
+meanmilitary<-NA
+meanairport<-NA
+}
+output<-data.frame(meanmilitary)
+output<-cbind(output, meanairport)
+return(output)
+}
+
+
+results<-apply(stateadd,1,caldistance, forprofit, military, airport)
+
+
+
+
+#function to draw interaction effect
+
+calfunction<-function(fix,fixcoe,fixst, var)
+
+
+
+
+
+
