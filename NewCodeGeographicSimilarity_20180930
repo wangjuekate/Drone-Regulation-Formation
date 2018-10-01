@@ -77,11 +77,9 @@ firmID[i,]$longitude<-location[findadd,3]
 
 write.table(firmID,file="AUVSIlocation.csv",sep=",",row.names=FALSE)
 
-#Nonprofit
-Nonprofit<-read.table("",)
 
+library(readstata13)
 
-#find nearest distance
 statedata<-read.dta13("NewDistance_20180929.dta")
 stateadd<-statedata[,1:3]
 stateadd$date<-as.Date(paste(stateadd$currentyear,stateadd$month,"01",sep="-"))
@@ -115,12 +113,26 @@ distance[i]<-distm(cbind(set1[2],set1[1]), cbind(set2[i,2],set2[i,1]), fun = dis
 return(min(distance))
 }
 
+differencemilitary<-apply(forprofit[,5:6],1,calmeandistance,military)
+forprofit$dismilitary<-differencemilitary
+differenceairport<-apply(forprofit[,5:6],1,calmeandistance,airport)
+forprofit$disairport<-differenceairport
+write.table(forprofit, file="firmdistances.csv",sep=",",row.names=FALSE)
 
-caldistance<-function(input, orgs, military, airport){
-address<-which(orgs$date<as.Date(as.matrix(input[4]))& orgs$statef ==as.numeric(as.matrix(input[3])))
+#find individual and coalition distance
+allfirm<-read.table("firmdistances.csv",sep=",",header=TRUE)
+individual<-read.table("IndividualAdoption.csv",sep=",",header=TRUE)
+individual<-allfirm[which(!allfirm$docID%in%as.matrix(individual)),]
+
+AUVSI<-read.table("AUVSIlocation.csv",sep=",",header=TRUE)
+AUVSI<-allfirm[which(!allfirm$docID%in%AUVSI$docID),]
+
+
+caldistance<-function(input, orgs){
+address<-which(as.Date(as.matrix(orgs$date))<as.Date(as.matrix(input[4]))& as.numeric(as.matrix(orgs$statef)) ==as.numeric(as.matrix(input[3])))
 if(length(address)!=0){
-meanmilitary<-mean(as.numeric(unlist(apply(orgs[address, 5:6],1, calmeandistance,military))),na.rm=TRUE)
-meanairport<-mean(as.numeric(unlist(apply(orgs[address, 5:6],1, calmeandistance,airport))),na.rm=TRUE)
+meanmilitary<-mean(as.numeric(as.matrix(orgs[address,9 ])),na.rm=TRUE)
+meanairport<-mean(as.numeric(as.matrix(orgs[address, 10])),na.rm=TRUE)
 }else{
 meanmilitary<-NA
 meanairport<-NA
@@ -130,16 +142,167 @@ output<-cbind(output, meanairport)
 return(output)
 }
 
+results<-apply(stateadd,1,caldistance, forprofit)
+results<-do.call(rbind,results)
+stateadd$meanmilitary<-results$meanmilitary
+stateadd$meanairport<-results$meanairport
+write.table(stateadd,file="statesimilar.csv",sep=",",row.names=FALSE)
 
-results<-apply(stateadd,1,caldistance, forprofit, military, airport)
+
+
+results<-apply(stateadd,1,caldistance, individual)
+results<-do.call(rbind,results)
+stateadd$individualmilitary<-results$meanmilitary
+stateadd$individualairport<-results$meanairport
+
+
+write.table(stateadd,file="individualsimilar.csv",sep=",",row.names=FALSE)
+
+
+results<-apply(stateadd,1,caldistance, AUVSI)
+results<-do.call(rbind,results)
+stateadd$AUVSImilitary<-results$meanmilitary
+stateadd$AUVSIairport<-results$meanairport
+
+write.table(stateadd,file="AUVSIsimilarity.csv",sep=",",row.names=FALSE)
+
+
+
+******************************************
+#add regulation
+******************************************
+
+stateregulation<-read.table("StateRegulationLimitation.csv",sep=",",header=TRUE)
+stateregulation$date<- as.Date(paste(stateregulation$Passyear,stateregulation$Passmonth,"01",sep="-"))
+
+
+statedata<-read.dta13("NewDistance_20180929.dta")
+stateadd<-statedata[,1:3]
+stateadd$date<-as.Date(paste(stateadd$currentyear,stateadd$month,"01",sep="-"))
+
+
+calstate<-function(input, orgs){
+address<-which(orgs$date<as.Date(as.matrix(input[4]))& orgs$FIPS.Code ==as.numeric(as.matrix(input[3])))
+if(length(address)!=0){
+simimilitary<-sum(orgs[address, 4],na.rm=TRUE)
+simiairport<-sum(orgs[address,5],na.rm=TRUE)
+}else{
+simimilitary<-NA
+simiairport<-NA
+}
+output<-data.frame(simimilitary)
+output<-cbind(output, simiairport)
+return(output)
+}
+
+results<-apply(stateadd,1,calstate, stateregulation)
+results<-do.call(rbind,results)
+stateadd$regulationmilitary<-results$simimilitary
+stateadd$regulationairport<-results$simiairport
+stateadd[which(is.na(stateadd$regulationmilitary)),]$regulationmilitary<-0
+stateadd[which(is.na(stateadd$regulationairport)),]$regulationairport<-0
+
+write.table(stateadd,file="statesimiregulation.csv",sep=",",row.names=FALSE)
 
 
 
 
-#function to draw interaction effect
+#merge data set
+statedata<-read.dta13("NewDistance_20180929.dta")
+addregulation<-read.table("statesimiregulation.csv",sep=",",header=TRUE)
+addsimilarity<-read.table("statesimilar.csv",sep=",",header=TRUE)
 
-calfunction<-function(fix,fixcoe,fixst, var)
+statedata<-merge(statedata,addregulation, by.x=c("currentyear", "month", "statefipx"),
+by.y=c("currentyear", "month", "statefipx"),all.x=TRUE
+)
 
+
+statedata<-merge(statedata,addsimilarity, by.x=c("currentyear", "month", "statefipx"),
+by.y=c("currentyear", "month", "statefipx"),all.x=TRUE
+)
+
+individual<-read.table("individualsimilar.csv",sep=",",header=TRUE)
+AUVSI<-read.table("AUVSIsimilarity.csv",sep=",",header=TRUE)
+
+statedata<-read.dta13("Regulationsimi.dta")
+statedata<-merge(statedata,individual, by.x=c("currentyear", "month", "statefipx"),
+by.y=c("currentyear", "month", "statefipx"),all.x=TRUE
+)
+
+statedata<-merge(statedata,AUVSI, by.x=c("currentyear", "month", "statefipx"),
+by.y=c("currentyear", "month", "statefipx"),all.x=TRUE
+)
+
+library(foreign)
+write.dta(statedata,file="Regulationsimi.dta")
+
+#add the proposal and competition
+proposedbills<-read.table("proposedbills.csv",sep=",",header=TRUE)
+proposedbills$date<-as.Date(paste(proposedbills$ProposYear,proposedbills$ProposMonth,"01",sep="-"))
+
+sumup<-function(input,orgs){
+address<-which(orgs$date<as.Date(as.matrix(input[4]))& orgs$Statefips ==as.numeric(as.matrix(input[3])))
+return(length(address))
+}
+library(plyr)
+results<-apply(stateadd,1,sumup, proposedbills)
+stateadd$proposedbill_p<-results
+write.table(stateadd,file="proposedbills.csv",sep=",",row.names=FALSE)
+
+
+
+statedata<-read.dta13("Regulationsimi.dta")
+statedata<-merge(statedata,stateadd, by.x=c("currentyear","month", "statefipx"),
+by.y=c("currentyear","month", "statefipx"),all.x=TRUE)
+
+write.dta(statedata,file="Regulationsimi.dta")
+
+politicalcompetition<-read.table("statepoliticacompetition.csv",sep=",",header=TRUE)
+politicalcompetition<-politicalcompetition[,1:3]
+statedata<-merge(statedata,politicalcompetition, by.x=c("currentyear", "statefipx"),
+by.y=c("Year", "statefips"),all.x=TRUE
+)
+
+stateregulation<-read.dta13("testStateregulation.dta")
+addup<-stateregulation[,1:3]
+addup$pubprotest_6m<-stateregulation$pubprotest_6m
+addup$pubprotest_12m<-stateregulation$pubprotest_12m
+
+statedata<-merge(statedata, addup,
+by.x=c("currentyear", "month", "statefipx"),
+by.y=c("currentyear", "month", "statefipx"),all.x=TRUE)
+
+replace test = log(airportmean*1000000+1)
+
+replace airportAUVSI= log(airportAUVSI*1000000+1)
+
+replace airportindividual = log(airportindividual*1000000+1)
+
+
+
+xtreg logsimilar  nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop  , fe 
+
+est sto model1
+
+xtreg logsimilar  test nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop  , fe 
+
+est sto model2
+
+xtreg  logsimilar test airportindividual  nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop ,fe 
+
+est sto model3
+
+xtreg logsimilar test allactivity_p  c.(test)#c.(allactivity_p ) nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop ,fe 
+
+est sto model4
+
+xtreg logsimilar test hvd2_winmargin_4yr  c.(test)#c.(hvd2_winmargin_4yr ) nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop ,fe 
+
+est sto model5
+
+Robust Check
+
+xtreg logsimilar test Idcompetition c.(test)#c.(Idcompetition) nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop ,fe 
 
 
 
