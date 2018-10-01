@@ -280,31 +280,31 @@ replace airportindividual = log(airportindividual*1000000+1)
 
 
 
-xtreg logsimilar  nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop  , fe 
+xtreg logsimilar  alldrone_p  airportpercapita loggdp Totalpop , fe 
 
 est sto model1
 
-xtreg logsimilar  test nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop  , fe 
+xtreg logsimilar  test alldrone_p  airportpercapita loggdp Totalpop , fe 
 
 est sto model2
 
-xtreg  logsimilar test airportindividual  nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop ,fe 
+xtreg  logsimilar test airportindividual  alldrone_p  airportpercapita loggdp Totalpop ,fe 
 
 est sto model3
 
-xtreg logsimilar test allactivity_p  c.(test)#c.(allactivity_p ) nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop ,fe 
+xtreg logsimilar test allactivity_p  c.(test)#c.(allactivity_p ) alldrone_p  airportpercapita loggdp Totalpop,fe 
 
 est sto model4
 
-xtreg logsimilar test hvd2_winmargin_4yr  c.(test)#c.(hvd2_winmargin_4yr ) nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop ,fe 
+xtreg logsimilar test hvd2_winmargin_4yr  c.(test)#c.(hvd2_winmargin_4yr ) alldrone_p  airportpercapita loggdp Totalpop ,fe 
 
 est sto model5
 
 Robust Check
 
-xtreg logsimilar test Idcompetition c.(test)#c.(Idcompetition) nclub militarybase privacyindex alldrone_p nresearchorg airportpercapita loggdp Totalpop ,fe 
+xtreg logsimilar test Idcompetition c.(test)#c.(Idcompetition)  alldrone_p  airportpercapita loggdp Totalpop ,fe 
 
 
-
+sum logsimilar test airportindividual  allactivity_p hvd2_winmargin_4yr alldrone_p airportpercapita loggdp Totalpop 
 
 
